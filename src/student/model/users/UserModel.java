@@ -1,7 +1,21 @@
 package student.model.users;
 
+import javax.validation.constraints.NotEmpty;
+
 public class UserModel {
-	private String userId,userName,password,createdAt;
+	@NotEmpty
+	private String userId,password;
+	private String comfirmPassword;
+	private String userName;
+	public String getComfirmPassword() {
+		return comfirmPassword;
+	}
+
+	public void setComfirmPassword(String comfirmPassword) {
+		this.comfirmPassword = comfirmPassword;
+	}
+
+	private String createdAt;
 
 	public String getUserId() {
 		return userId;

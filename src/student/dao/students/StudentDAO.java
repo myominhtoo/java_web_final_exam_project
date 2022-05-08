@@ -6,9 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.springframework.stereotype.Service;
+
 import student.dao.DB;
 import student.dto.students.*;
 
+@Service("studentDAO")
 public class StudentDAO {
 
 	DB db = new DB();
@@ -37,7 +40,7 @@ public class StudentDAO {
 	//delete query method
 	public int delete(StudentReqDTO dto) {
 		int status = 0 ; 
-		String query = "DELETE * FROM students WHERE student_id = ? ";
+		String query = "DELETE FROM students WHERE student_id = ? ";
 		try {
 			PreparedStatement pre = con.prepareStatement(query);
 			pre.setString(1 , dto.getStudentId());
@@ -109,5 +112,27 @@ public class StudentDAO {
 			e.printStackTrace();
 		}
 		return status;
+	}
+	
+	public ArrayList<StudentResDTO> search(StudentReqDTO dto){
+		ArrayList<StudentResDTO> students = new ArrayList<>();
+		String query = "SELECT *FROM students WHERE student_id = ? OR (student_name LIKE '%"+dto.getStudentName()+"%' AND class_name LIKE '%"+dto.getClassName()+"%')";
+		try {
+			PreparedStatement pre = con.prepareStatement(query);
+			pre.setString( 1 , dto.getStudentName());
+			ResultSet set = pre.executeQuery();
+			while(set.next()) {
+				StudentResDTO student = new StudentResDTO();
+				student.setClassName(set.getString("class_name"));
+				student.setRegisteredDate(set.getString("registered_date"));
+				student.setStatus(set.getString("status"));
+				student.setStudentId(set.getString("student_id"));
+				student.setStudentName(set.getString("student_name"));
+				students.add(student);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return students;
 	}
 }

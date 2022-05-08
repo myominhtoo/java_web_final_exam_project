@@ -6,10 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.springframework.stereotype.Service;
+
 import student.dao.DB;
 import student.dto.classes.ClassReqDTO;
 import student.dto.classes.ClassResDTO;
 
+@Service("classDAO")
 public class ClassDAO {
 	DB db = new DB();
 	private Connection con = db.con;
@@ -18,7 +21,7 @@ public class ClassDAO {
 	//insert query method
 	public int insert(ClassReqDTO dto) {
 		int status = 0;
-		String query = "INSERT INTO users (class_id,class_name) VALUES(?,?) ";
+		String query = "INSERT INTO classes (class_id,class_name) VALUES(?,?) ";
 		try {
 			PreparedStatement pre = con.prepareStatement(query);
 			pre.setString(1 , dto.getClassId());
@@ -48,7 +51,7 @@ public class ClassDAO {
 	//select one data query method
 	public ClassResDTO  select(ClassReqDTO dto) {
 		ClassResDTO cls = new ClassResDTO();
-		String query = "SELECT  * FROM users WHERE class_id = ? ";
+		String query = "SELECT  * FROM classes WHERE class_id = ? ";
 		try {
 			PreparedStatement pre = con.prepareStatement(query);
 			pre.setString(1 , dto.getClassId());

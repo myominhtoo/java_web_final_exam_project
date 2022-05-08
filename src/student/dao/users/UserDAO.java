@@ -3,6 +3,9 @@ package student.dao.users;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import org.springframework.stereotype.Service;
+
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 
@@ -10,6 +13,7 @@ import student.dao.DB;
 import student.dto.users.UserReqDTO;
 import student.dto.users.UserResDTO;
 
+@Service("userDAO")
 public class UserDAO {
 	
 	DB db = new DB();
@@ -36,7 +40,7 @@ public class UserDAO {
 	//delete query method
 	public int delete(UserReqDTO dto) {
 		int status = 0 ; 
-		String query = "DELETE * FROM users WHERE user_id = ? ";
+		String query = "DELETE FROM users WHERE user_id = ? ";
 		try {
 			PreparedStatement pre = con.prepareStatement(query);
 			pre.setString(1 , dto.getUserId());
@@ -106,4 +110,26 @@ public class UserDAO {
 		return status;
 	}
 	
+	//search query method
+	public ArrayList<UserResDTO> search(UserReqDTO dto){
+		ArrayList<UserResDTO> users = new ArrayList<>();
+		
+		String query = "SELECT * FROM users WHERE user_id = ? OR user_name LIKE '%"+dto.getUserName()+"%'";
+		try {
+			PreparedStatement pre = con.prepareStatement(query);
+			pre.setString( 1 , dto.getUserId());
+			ResultSet set = pre.executeQuery();
+			while(set.next()) {
+				UserResDTO user = new UserResDTO();
+				user.setCreatedAt(set.getString("created_at"));
+				user.setPassword(set.getString("password"));
+				user.setUserId(set.getString("user_id"));
+				user.setUserName(set.getString("user_name"));
+				users.add(user);
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+		return users;
+	}
 }
